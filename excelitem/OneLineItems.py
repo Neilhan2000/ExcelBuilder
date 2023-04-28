@@ -32,20 +32,28 @@ def init_multiple_merged_cell_item(
         split_position: list,
         font_style: Font = Font(),
         alignment: Alignment = Alignment(),
+        specify_position_alignment = Alignment(),
+        specify_position: str = None,
         border: Border = Border(),
 ):
     border_row = find_cell_digit(find_start_cell(split_position[0]))
 
     # initialize all merged cells
     for cells_need_merged in split_position:
+        start_position = find_start_cell(cells_need_merged)
+
         work_sheet.merge_cells(cells_need_merged)
-        work_sheet[find_start_cell(cells_need_merged)].value = position_value[split_position.index(cells_need_merged)]
-        work_sheet[find_start_cell(cells_need_merged)].font = font_style
-        work_sheet[find_start_cell(cells_need_merged)].alignment = alignment
+        work_sheet[start_position].value = position_value[split_position.index(cells_need_merged)]
+        work_sheet[start_position].font = font_style
+        work_sheet[start_position].alignment = alignment
 
     # find last element and use it to set up border
     for i in range(convert_position_to_col_number(find_end_cell(split_position[-1])) + 1):
         work_sheet[convert_col_and_row_to_position(col_number=i, row_number=border_row)].border = border
+
+    # set specify col
+    if specify_position is not None:
+        work_sheet[specify_position].alignment = specify_position_alignment
 
 
 def init_three_column_fee_item(
@@ -63,28 +71,27 @@ def init_three_column_fee_item(
 ):
     start_position = find_start_cell(left_column_range)
     start_column = start_position[0]
-    start_row = start_position[-1]
+    start_row = find_cell_digit(start_position)
     total_row_number = int(find_cell_digit(find_end_cell(left_column_range))) - int(find_cell_digit(start_position)) + 1
     middle_row_count = 0
     right_row_count = 0
-    print(total_row_number)
 
     def get_left_position(increase_row: int) -> str:
         return convert_col_and_row_to_position(
             col_number=convert_column_str_to_int(column_str=start_column),
-            row_number=int(start_row) + increase_row
+            row_number=start_row + increase_row
         )
 
     def get_middle_position(increase_row: int) -> str:
         return convert_col_and_row_to_position(
             col_number=convert_column_str_to_int(column_str=start_column) + 1,
-            row_number=int(start_row) + increase_row
+            row_number=start_row + increase_row
         )
 
     def get_right_position(increase_row: int) -> str:
         return convert_col_and_row_to_position(
             col_number=convert_column_str_to_int(column_str=start_column) + 2,
-            row_number=int(start_row) + increase_row
+            row_number=start_row + increase_row
         )
 
     # initialize left column
@@ -205,4 +212,3 @@ def find_end_cell(cells_str: str):
 
 def find_cell_digit(cell: str) -> int:
     return int("".join(filter(str.isdigit, cell)))
-

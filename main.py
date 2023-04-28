@@ -128,6 +128,54 @@ init_three_column_fee_item(
         right=Side(style="thin")
     )
 )
+init_multiple_merged_cell_item(
+    work_sheet=newWorkSheet,
+    position_value=["全學期收費", "37,164"],
+    split_position=["A15:B15", "C15"],
+    font_style=Font(size=10),
+    alignment=Alignment(horizontal="center", vertical="center"),
+    specify_position_alignment=Alignment(horizontal="right", vertical="center"),
+    specify_position="C15",
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    ),
+)
+init_multiple_merged_cell_item(
+    work_sheet=newWorkSheet,
+    position_value=["月平均收費", "6,194"],
+    split_position=["A16:B16", "C16"],
+    font_style=Font(size=10),
+    alignment=Alignment(horizontal="center", vertical="center"),
+    specify_position_alignment=Alignment(horizontal="right", vertical="center"),
+    specify_position="C16",
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    ),
+)
+init_three_column_fee_item(
+    work_sheet=newWorkSheet,
+    left_column_range="A17:A19",
+    left_title="其他代收",
+    middle_columns_value=["交通費", "保險費", "課後拖延/月"],
+    right_columns_value=[" ", " ", "750"],
+    left_column_font=Font(size=9),
+    other_font=Font(size=10),
+    left_column_alignment=Alignment(horizontal="center", vertical="center"),
+    middle_alignment=Alignment(horizontal="center", vertical="center"),
+    right_alignment=Alignment(horizontal="right", vertical="center"),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
 format_all_columns(work_sheet=newWorkSheet)
 newWorkBook.save("receipt.xlsx")
 # need to open the finished file
