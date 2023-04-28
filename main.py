@@ -2,7 +2,7 @@ from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item
+from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item
 from excelutils.WorkSheetFunctions import format_all_columns
 
 workBook: Workbook = load_workbook(filename="ReceiptExample.xlsx")
@@ -93,7 +93,42 @@ init_multiple_merged_cell_item(
     ),
     border_row=5
 )
-
+init_three_column_fee_item(
+    work_sheet=newWorkSheet,
+    left_column_range="A6:A8",
+    left_title="學期\n收費",
+    middle_columns_value=["學費", "雜費"],
+    right_columns_value=["15000", "-"],
+    left_column_font=Font(size=9),
+    other_font=Font(size=10),
+    left_column_alignment=Alignment(horizontal="center", vertical="center"),
+    middle_alignment=Alignment(horizontal="center", vertical="center"),
+    right_alignment=Alignment(horizontal="right", vertical="center"),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
+init_three_column_fee_item(
+    work_sheet=newWorkSheet,
+    left_column_range="A9:A14",
+    left_title="月收費",
+    middle_columns_value=["午餐費", "點心費", "材料費", "活動費", "雜費"],
+    right_columns_value=["1200", "850", "630", "530", "2984"],
+    left_column_font=Font(size=9),
+    other_font=Font(size=10),
+    left_column_alignment=Alignment(horizontal="center", vertical="center"),
+    middle_alignment=Alignment(horizontal="center", vertical="center"),
+    right_alignment=Alignment(horizontal="right", vertical="center"),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
 format_all_columns(work_sheet=newWorkSheet)
 newWorkBook.save("receipt.xlsx")
 # need to open the finished file
