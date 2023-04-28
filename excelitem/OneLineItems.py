@@ -33,8 +33,9 @@ def init_multiple_merged_cell_item(
         font_style: Font = Font(),
         alignment: Alignment = Alignment(),
         border: Border = Border(),
-        border_row: int = 1
 ):
+    border_row = find_cell_digit(find_start_cell(split_position[0]))
+
     # initialize all merged cells
     for cells_need_merged in split_position:
         work_sheet.merge_cells(cells_need_merged)

@@ -91,7 +91,6 @@ init_multiple_merged_cell_item(
         left=Side(style="thin"),
         right=Side(style="thin")
     ),
-    border_row=5
 )
 init_three_column_fee_item(
     work_sheet=newWorkSheet,
