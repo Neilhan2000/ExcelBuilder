@@ -2,19 +2,17 @@ from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item
-from excelutils.WorkSheetFunctions import format_all_columns
+from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item, init_two_column_merged_row_item
+from excelutils.CustomWorksheet import format_all_columns
 
 workBook: Workbook = load_workbook(filename="ReceiptExample.xlsx")
 workSheet: Worksheet = workBook.active
 sheetNames: list = workBook.sheetnames
 
-# workSheet["A5"].value = "[新名字]"
-# workBook.save(filename = "ReceiptData.xlsx")
-
 newWorkBook: Workbook = Workbook()
 newWorkSheet: Worksheet = newWorkBook.active
 newWorkSheet.title = "小班第一胎"
+
 
 init_title_item(
     work_sheet=newWorkSheet,
@@ -176,6 +174,23 @@ init_three_column_fee_item(
         right=Side(style="thin")
     )
 )
+init_two_column_merged_row_item(
+    work_sheet=newWorkSheet,
+    left_split_row=["D6:D7", "D8:D9", "D10:D11", "D12:D13", "D14:D15", "D16:D17"],
+    right_split_row=["E6:E7", "E8:E9", "E10:E11", "E12:E13", "E14:E15", "E16:E17"],
+    left_column_values=["第1胎子女", "第2胎子女", "第3胎(含)以上子女", "低收入戶或\n中低收入", "", ""],
+    right_column_values=["3,000", "2,000", "1,000", "-", "", "-"],
+    left_alignment=Alignment(horizontal="center", vertical="center"),
+    right_alignment=Alignment(horizontal="right", vertical="center"),
+    text_font=Font(size=10),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
 format_all_columns(work_sheet=newWorkSheet)
+
 newWorkBook.save("receipt.xlsx")
 # need to open the finished file

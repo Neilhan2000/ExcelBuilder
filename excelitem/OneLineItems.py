@@ -18,6 +18,7 @@ def init_title_item(
     # initialize title cell
     if is_merged_title:
         work_sheet.merge_cells(f"${start_position}:${end_position}")
+
     work_sheet[start_position].font = font_style
     work_sheet[start_position].alignment = alignment
 
@@ -32,7 +33,7 @@ def init_multiple_merged_cell_item(
         split_position: list,
         font_style: Font = Font(),
         alignment: Alignment = Alignment(),
-        specify_position_alignment = Alignment(),
+        specify_position_alignment=Alignment(),
         specify_position: str = None,
         border: Border = Border(),
 ):
@@ -129,6 +130,49 @@ def init_three_column_fee_item(
     for i in range(total_row_number):
         right_position_cell = get_right_position(increase_row=i)
         work_sheet[right_position_cell].border = border
+
+
+def init_two_column_merged_row_item(
+        work_sheet: Worksheet,
+        left_split_row: list,
+        right_split_row: list,
+        left_column_values: list,
+        right_column_values: list,
+        left_alignment: Alignment = Alignment(),
+        right_alignment: Alignment = Alignment(),
+        text_font: Font = Font(),
+        border: Border = Border
+):
+    left_row_count = 0
+    right_row_count = 0
+
+    # initialize left column
+    for rows_need_merged in left_split_row:
+        work_sheet.merge_cells(rows_need_merged)
+
+        merged_start_cell = work_sheet[find_start_cell(rows_need_merged)]
+        merged_start_cell.alignment = left_alignment
+        merged_start_cell.font = text_font
+        merged_start_cell.value = left_column_values[left_row_count]
+        left_row_count += 1
+
+        merged_end_cell = work_sheet[find_end_cell(rows_need_merged)]
+        merged_start_cell.border = border
+        merged_end_cell.border = border
+
+    # initialize right column
+    for rows_need_merged in right_split_row:
+        work_sheet.merge_cells(rows_need_merged)
+
+        merged_start_cell = work_sheet[find_start_cell(rows_need_merged)]
+        merged_start_cell.alignment = right_alignment
+        merged_start_cell.font = text_font
+        merged_start_cell.value = right_column_values[right_row_count]
+        right_row_count += 1
+
+        merged_end_cell = work_sheet[find_end_cell(rows_need_merged)]
+        merged_start_cell.border = border
+        merged_end_cell.border = border
 
 
 def convert_col_and_row_to_position(col_number: int, row_number: int) -> str:  # make it private
