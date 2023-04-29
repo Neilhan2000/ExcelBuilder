@@ -2,7 +2,8 @@ from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item, init_two_column_merged_row_item
+from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item, \
+    init_two_column_merged_row_item, init_row_and_column_merged_item
 from excelutils.CustomWorksheet import format_all_columns
 
 workBook: Workbook = load_workbook(filename="ReceiptExample.xlsx")
@@ -183,6 +184,19 @@ init_two_column_merged_row_item(
     left_alignment=Alignment(horizontal="center", vertical="center"),
     right_alignment=Alignment(horizontal="right", vertical="center"),
     text_font=Font(size=10),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
+init_row_and_column_merged_item(
+    work_sheet=newWorkSheet,
+    merged_range="F6:I17",
+    value="\n1.全學期以6個月計。\n\n2.自111年8月起，第1胎子女家長每月繳費不超過3,000元，第2胎不超過2,000元，第3胎以上不超過1,000元，低收入戶及中低收戶家長「免繳費用」，與幼兒園原收費間之差額，由行政院協助家長支付園方。",
+    text_alignment=Alignment(horizontal="left", vertical="top"),
+    text_font=Font(size=8),
     border=Border(
         top=Side(style="thin"),
         bottom=Side(style="thin"),

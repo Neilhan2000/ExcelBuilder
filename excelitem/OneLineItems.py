@@ -37,11 +37,11 @@ def init_multiple_merged_cell_item(
         specify_position: str = None,
         border: Border = Border(),
 ):
-    border_row = find_cell_digit(find_start_cell(split_position[0]))
+    border_row = find_cell_digit(find_start_position(split_position[0]))
 
     # initialize all merged cells
     for cells_need_merged in split_position:
-        start_position = find_start_cell(cells_need_merged)
+        start_position = find_start_position(cells_need_merged)
 
         work_sheet.merge_cells(cells_need_merged)
         work_sheet[start_position].value = position_value[split_position.index(cells_need_merged)]
@@ -49,7 +49,7 @@ def init_multiple_merged_cell_item(
         work_sheet[start_position].alignment = alignment
 
     # find last element and use it to set up border
-    for i in range(convert_position_to_col_number(find_end_cell(split_position[-1])) + 1):
+    for i in range(convert_position_to_col_number(find_end_position(split_position[-1])) + 1):
         work_sheet[convert_col_and_row_to_position(col_number=i, row_number=border_row)].border = border
 
     # set specify col
@@ -70,10 +70,11 @@ def init_three_column_fee_item(
         right_alignment=Alignment(),
         border=Border()
 ):
-    start_position = find_start_cell(left_column_range)
+    start_position = find_start_position(left_column_range)
     start_column = start_position[0]
     start_row = find_cell_digit(start_position)
-    total_row_number = int(find_cell_digit(find_end_cell(left_column_range))) - int(find_cell_digit(start_position)) + 1
+    total_row_number = int(find_cell_digit(find_end_position(left_column_range))) - int(
+        find_cell_digit(start_position)) + 1
     middle_row_count = 0
     right_row_count = 0
 
@@ -150,13 +151,13 @@ def init_two_column_merged_row_item(
     for rows_need_merged in left_split_row:
         work_sheet.merge_cells(rows_need_merged)
 
-        merged_start_cell = work_sheet[find_start_cell(rows_need_merged)]
+        merged_start_cell = work_sheet[find_start_position(rows_need_merged)]
         merged_start_cell.alignment = left_alignment
         merged_start_cell.font = text_font
         merged_start_cell.value = left_column_values[left_row_count]
         left_row_count += 1
 
-        merged_end_cell = work_sheet[find_end_cell(rows_need_merged)]
+        merged_end_cell = work_sheet[find_end_position(rows_need_merged)]
         merged_start_cell.border = border
         merged_end_cell.border = border
 
@@ -164,15 +165,66 @@ def init_two_column_merged_row_item(
     for rows_need_merged in right_split_row:
         work_sheet.merge_cells(rows_need_merged)
 
-        merged_start_cell = work_sheet[find_start_cell(rows_need_merged)]
+        merged_start_cell = work_sheet[find_start_position(rows_need_merged)]
         merged_start_cell.alignment = right_alignment
         merged_start_cell.font = text_font
         merged_start_cell.value = right_column_values[right_row_count]
         right_row_count += 1
 
-        merged_end_cell = work_sheet[find_end_cell(rows_need_merged)]
+        merged_end_cell = work_sheet[find_end_position(rows_need_merged)]
         merged_start_cell.border = border
         merged_end_cell.border = border
+
+
+def init_row_and_column_merged_item(
+        work_sheet: Worksheet,
+        merged_range: str,
+        value: str,
+        text_font: Font = Font(),
+        text_alignment: Alignment = Alignment(),
+        border: Border = Border()
+):
+    work_sheet.merge_cells(merged_range)
+
+    merged_cell = work_sheet[find_start_position(merged_range)]
+    merged_cell.value = value
+    merged_cell.font = text_font
+    merged_cell.alignment = text_alignment
+
+    def get_position(col_num: int, row_num: int) -> str:
+        return convert_col_and_row_to_position(
+            col_number=col_num,
+            row_number=row_num
+        )
+
+    # recursive function to traverse all rows
+    def traverse_all_rows_and_set_border(col_list: list, row_list: list, col_num, row_num):
+        if row_num <= row_list[-1]:
+            work_sheet[
+                get_position(
+                    col_num=col_num,
+                    row_num=row_num
+                )
+            ].border = border
+
+            traverse_all_rows_and_set_border(col_list=col_list, row_list=row_list, col_num=col_num, row_num=row_num + 1)
+
+    start_column_number = convert_position_to_col_number(position=find_start_position(merged_range))
+    end_column_number = convert_position_to_col_number(position=find_end_position(merged_range))
+    start_row = find_cell_digit(find_start_position(merged_range))
+    end_row = find_cell_digit(find_end_position(merged_range))
+
+    # traverse all cell and set border
+    column_list = []
+    for column_number in range(start_column_number, end_column_number + 1):
+        column_list.append(column_number)
+
+    row_list = []
+    for row_number in range(start_row, end_row + 1):
+        row_list.append(row_number)
+
+    for column in column_list:
+        traverse_all_rows_and_set_border(column_list, row_list, column, row_list[0])
 
 
 def convert_col_and_row_to_position(col_number: int, row_number: int) -> str:  # make it private
@@ -246,11 +298,11 @@ def convert_column_str_to_int(column_str) -> int:
             return 9
 
 
-def find_start_cell(cells_str: str):
+def find_start_position(cells_str: str):
     return cells_str.split(":")[0]
 
 
-def find_end_cell(cells_str: str):
+def find_end_position(cells_str: str):
     return cells_str.split(":")[-1]
 
 
