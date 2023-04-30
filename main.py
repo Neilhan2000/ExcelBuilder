@@ -1,3 +1,5 @@
+import asyncio
+
 from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.workbook import Workbook
@@ -6,6 +8,8 @@ from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_it
     init_two_column_merged_row_item, init_row_and_column_merged_item, init_multiple_row_item
 from excelutils.CustomWorksheet import format_all_columns_with_hard_coded, set_single_cell_alignment, set_single_row_height, \
     set_single_cell_value
+from model.ExcelModel import ExcelModel
+from model.Result import Success, Error
 
 work_book: Workbook = load_workbook(filename="ReceiptExample.xlsx")
 work_sheet: Worksheet = work_book.active
@@ -323,6 +327,12 @@ init_multiple_row_item(
 )
 
 format_all_columns_with_hard_coded(work_sheet=new_work_sheet)
+
+result = asyncio.run(ExcelModel().read_all_text_from_note())
+if isinstance(result, Error):
+    print(type(result))
+if isinstance(result, Success):
+    print(result.data)
 
 new_work_book.save("receipt.xlsx")
 # need open the finished file function
