@@ -1,3 +1,4 @@
+from openpyxl.styles import Alignment
 from openpyxl.worksheet.worksheet import Worksheet
 
 
@@ -25,3 +26,7 @@ def check_all_columns_width(work_sheet: Worksheet):
     print(work_sheet.column_dimensions["H"].width)
     print(work_sheet.column_dimensions["I"].width)
     print(work_sheet.column_dimensions["J"].width)
+
+
+def set_single_cell_alignment(work_sheet: Worksheet, position: str, alignment: Alignment):
+    work_sheet[position].alignment = alignment

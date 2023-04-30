@@ -4,7 +4,7 @@ from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item, \
     init_two_column_merged_row_item, init_row_and_column_merged_item
-from excelutils.CustomWorksheet import format_all_columns
+from excelutils.CustomWorksheet import format_all_columns, set_single_cell_alignment
 
 workBook: Workbook = load_workbook(filename="ReceiptExample.xlsx")
 workSheet: Worksheet = workBook.active
@@ -142,24 +142,35 @@ init_multiple_merged_cell_item(
         right=Side(style="thin")
     ),
 )
-init_multiple_merged_cell_item(
+init_row_and_column_merged_item(
     work_sheet=newWorkSheet,
-    position_value=["月平均收費", "6,194"],
-    split_position=["A16:B16", "C16"],
-    font_style=Font(size=10),
-    alignment=Alignment(horizontal="center", vertical="center"),
-    specify_position_alignment=Alignment(horizontal="right", vertical="center"),
-    specify_position="C16",
+    merged_range="A16:B17",
+    value="月平均收費",
+    text_font=Font(size=10),
+    text_alignment=Alignment(horizontal="center", vertical="center"),
     border=Border(
         top=Side(style="thin"),
         bottom=Side(style="thin"),
         left=Side(style="thin"),
         right=Side(style="thin")
-    ),
+    )
+)
+init_row_and_column_merged_item(
+    work_sheet=newWorkSheet,
+    merged_range="C16:C17",
+    value="6,194",
+    text_font=Font(size=10),
+    text_alignment=Alignment(horizontal="right", vertical="center"),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
 )
 init_three_column_fee_item(
     work_sheet=newWorkSheet,
-    left_column_range="A17:A19",
+    left_column_range="A18:A20",
     left_title="其他代收",
     middle_columns_value=["交通費", "保險費", "課後拖延/月"],
     right_columns_value=[" ", " ", "750"],
@@ -204,6 +215,35 @@ init_row_and_column_merged_item(
         right=Side(style="thin")
     )
 )
+init_multiple_merged_cell_item(
+    work_sheet=newWorkSheet,
+    position_value=["幼兒屬性為：", "第1胎子女", "每月應繳", "1,000"],
+    split_position=["D18", "E18:F18", "G18:H18", "I18"],
+    font_style=Font(size=10),
+    alignment=Alignment(vertical="center", horizontal="right"),
+)
+set_single_cell_alignment(work_sheet=newWorkSheet, position="E18", alignment=Alignment(vertical="center", horizontal="left"))
+
+init_row_and_column_merged_item(
+    work_sheet=newWorkSheet,
+    merged_range="D19:E21",
+    value="收費金額合計新臺幣",
+    text_alignment=Alignment(horizontal="right", vertical="center"),
+    text_font=Font(size=10)
+)
+init_row_and_column_merged_item(
+    work_sheet=newWorkSheet,
+    merged_range="F19:G21",
+    value=""
+)
+init_row_and_column_merged_item(
+    work_sheet=newWorkSheet,
+    merged_range="H19:H21",
+    value="元整",
+    text_alignment=Alignment(horizontal="center", vertical="center"),
+    text_font=Font(size=10)
+)
+
 format_all_columns(work_sheet=newWorkSheet)
 
 newWorkBook.save("receipt.xlsx")

@@ -49,7 +49,7 @@ def init_multiple_merged_cell_item(
         work_sheet[start_position].alignment = alignment
 
     # find last element and use it to set up border
-    for i in range(convert_position_to_col_number(find_end_position(split_position[-1])) + 1):
+    for i in range(convert_position_to_col_number(find_start_position(split_position[0])), convert_position_to_col_number(find_end_position(split_position[-1])) + 1):
         work_sheet[convert_col_and_row_to_position(col_number=i, row_number=border_row)].border = border
 
     # set specify col
