@@ -4,7 +4,8 @@ from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item, \
     init_two_column_merged_row_item, init_row_and_column_merged_item
-from excelutils.CustomWorksheet import format_all_columns, set_single_cell_alignment
+from excelutils.CustomWorksheet import format_all_columns_with_hard_coded, set_single_cell_alignment, set_single_row_height, \
+    set_single_cell_value
 
 work_book: Workbook = load_workbook(filename="ReceiptExample.xlsx")
 work_sheet: Worksheet = work_book.active
@@ -93,7 +94,7 @@ init_multiple_merged_cell_item(
         bottom=Side(style="thin"),
         left=Side(style="thin"),
         right=Side(style="thin")
-    ),
+    )
 )
 
 init_three_column_fee_item(
@@ -147,7 +148,7 @@ init_multiple_merged_cell_item(
         bottom=Side(style="thin"),
         left=Side(style="thin"),
         right=Side(style="thin")
-    ),
+    )
 )
 
 init_row_and_column_merged_item(
@@ -259,7 +260,63 @@ init_row_and_column_merged_item(
     text_font=Font(size=10)
 )
 
-format_all_columns(work_sheet=new_work_sheet)
+init_row_and_column_merged_item(
+    work_sheet=new_work_sheet,
+    merged_range="A21:A22",
+    value="請假\n減收",
+    text_alignment=Alignment(horizontal="center", vertical="center"),
+    text_font=Font(size=9),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
+
+init_row_and_column_merged_item(
+    work_sheet=new_work_sheet,
+    merged_range="B21:B22",
+    value="午餐點心",
+    text_alignment=Alignment(horizontal="center", vertical="center"),
+    text_font=Font(size=9),
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
+
+init_row_and_column_merged_item(
+    work_sheet=new_work_sheet,
+    merged_range="C21:C22",
+    value="",
+    border=Border(
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+        left=Side(style="thin"),
+        right=Side(style="thin")
+    )
+)
+
+init_multiple_merged_cell_item(
+    work_sheet=new_work_sheet,
+    position_value=["園長：　　　　　　　　　　會計：　　　　　　　　　　　　經辦："],
+    split_position=["A23:I23"],
+    font_style=Font(size=10),
+    alignment=Alignment(horizontal="center", vertical="center"),
+)
+set_single_row_height(work_sheet=new_work_sheet, row=23, height=26)
+
+set_single_cell_value(
+    work_sheet=new_work_sheet,
+    position="A24",
+    value="——————————————————————————————————————",
+    text_font=Font(size=12)
+)
+
+format_all_columns_with_hard_coded(work_sheet=new_work_sheet)
 
 new_work_book.save("receipt.xlsx")
-# need to open the finished file
+# need open the finished file function
