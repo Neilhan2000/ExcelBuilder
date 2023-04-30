@@ -3,7 +3,7 @@ from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from excelitem.OneLineItems import init_title_item, init_multiple_merged_cell_item, init_three_column_fee_item, \
-    init_two_column_merged_row_item, init_row_and_column_merged_item
+    init_two_column_merged_row_item, init_row_and_column_merged_item, init_multiple_row_item
 from excelutils.CustomWorksheet import format_all_columns_with_hard_coded, set_single_cell_alignment, set_single_row_height, \
     set_single_cell_value
 
@@ -314,6 +314,12 @@ set_single_cell_value(
     position="A24",
     value="——————————————————————————————————————",
     text_font=Font(size=12)
+)
+
+init_multiple_row_item(
+    work_sheet=new_work_sheet,
+    vertical_string="第二聯存根聯",
+    start_position="J5"
 )
 
 format_all_columns_with_hard_coded(work_sheet=new_work_sheet)

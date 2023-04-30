@@ -227,6 +227,20 @@ def init_row_and_column_merged_item(
         traverse_all_rows_and_set_border(column_list, row_list, column, row_list[0])
 
 
+def init_multiple_row_item(
+        work_sheet: Worksheet,
+        vertical_string,
+        start_position
+):
+    for str_tuple in enumerate(vertical_string):
+        work_sheet[
+            convert_col_and_row_to_position(
+                col_number=convert_position_to_col_number(start_position[0]),
+                row_number=find_cell_digit(start_position) + str_tuple[0]
+            )
+        ].value = str_tuple[-1]
+
+
 def convert_col_and_row_to_position(col_number: int, row_number: int) -> str:  # make it private
     match col_number:
         case 0:
