@@ -25,12 +25,9 @@ class ExcelController:
             print(result.data)
             self._text_data = result.data
 
-    def initialize_excel_file(self):
+    def initialize_excel_file(self, new_work_book: Workbook):
+        new_work_sheet = new_work_book.active
         if self._text_data is not None:
-            new_work_book: Workbook = Workbook()
-            new_work_sheet: Worksheet = new_work_book.active
-            new_work_sheet.title = "小班第一胎"
-
             DataMapper.init_title_item(
                 work_sheet=new_work_sheet,
                 title="嘉義市私立菁英幼兒園(準公共幼兒園)",
@@ -117,7 +114,7 @@ class ExcelController:
                 left_column_range="A6:A8",
                 left_title="學期\n收費",
                 middle_columns_value=["學費", "雜費"],
-                right_columns_value=["15000", "-"],
+                right_columns_value=[self._text_data.tuition_fee, self._text_data.miscellaneous_fee_term],
                 left_column_font=Font(size=9),
                 other_font=Font(size=10),
                 left_column_alignment=Alignment(horizontal="center", vertical="center"),
@@ -136,7 +133,13 @@ class ExcelController:
                 left_column_range="A9:A14",
                 left_title="月收費",
                 middle_columns_value=["午餐費", "點心費", "材料費", "活動費", "雜費"],
-                right_columns_value=["1200", "850", "630", "530", "2984"],
+                right_columns_value=[
+                    self._text_data.lunch_fee,
+                    self._text_data.dessert_fee,
+                    self._text_data.material_fee,
+                    self._text_data.activity_fee,
+                    self._text_data.miscellaneous_fee_month
+                ],
                 left_column_font=Font(size=9),
                 other_font=Font(size=10),
                 left_column_alignment=Alignment(horizontal="center", vertical="center"),
@@ -218,7 +221,14 @@ class ExcelController:
                 left_split_row=["D6:D7", "D8:D9", "D10:D11", "D12:D13", "D14:D15", "D16:D17"],
                 right_split_row=["E6:E7", "E8:E9", "E10:E11", "E12:E13", "E14:E15", "E16:E17"],
                 left_column_values=["第1胎子女", "第2胎子女", "第3胎(含)以上子女", "低收入戶或\n中低收入", "", ""],
-                right_column_values=["3,000", "2,000", "1,000", "-", "", "-"],
+                right_column_values=[
+                    self._text_data.first_child,
+                    self._text_data.second_child,
+                    self._text_data.third_child,
+                    self._text_data.low_income_households,
+                    "",
+                    "-"
+                ],
                 left_alignment=Alignment(horizontal="center", vertical="center"),
                 right_alignment=Alignment(horizontal="right", vertical="center"),
                 text_font=Font(size=10),
