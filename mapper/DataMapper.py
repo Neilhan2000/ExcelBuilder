@@ -267,6 +267,38 @@ def convert_col_and_row_to_position(col_number: int, row_number: int) -> str:  #
             return f"I{row_number}"
         case 9:
             return f"J{row_number}"
+        case 10:
+            return f"K{row_number}"
+        case 11:
+            return f"L{row_number}"
+        case 12:
+            return f"M{row_number}"
+        case 13:
+            return f"N{row_number}"
+        case 14:
+            return f"O{row_number}"
+        case 15:
+            return f"P{row_number}"
+        case 16:
+            return f"Q{row_number}"
+        case 17:
+            return f"R{row_number}"
+        case 18:
+            return f"S{row_number}"
+        case 19:
+            return f"T{row_number}"
+        case 20:
+            return f"U{row_number}"
+        case 21:
+            return f"V{row_number}"
+        case 22:
+            return f"W{row_number}"
+        case 23:
+            return f"X{row_number}"
+        case 24:
+            return f"Y{row_number}"
+        case 25:
+            return f"Z{row_number}"
 
 
 def convert_position_to_col_number(position: str) -> int:
