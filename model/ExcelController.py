@@ -5,25 +5,33 @@ from openpyxl.worksheet.worksheet import Worksheet
 from mapper.DataMapper import DataMapper
 from openpyxl.styles import Font, Alignment, Border, Side
 from model.LoadTextModel import LoadTextModel
+from model.LoadExcelModel import LoadExcelModel
 from model.Result import Success, Error
 from model.dataclass.Fee import Fee
+from model.dataclass.Student import Student
 from excelutils.CustomWorksheet import format_all_columns_with_hard_coded, set_single_cell_alignment, set_single_row_height, \
     set_single_cell_value
 
 
 class ExcelController:
     _text_data: Fee = None
-    _student_data = None
+    _student_data: Student = None
 
     def read_text_data_from_model(self, model: LoadTextModel):
         result = asyncio.run(model.read_all_text_from_note())
         if isinstance(result, Error):
-            print(type(result))
             return
 
         if isinstance(result, Success):
-            print(result.data)
             self._text_data = result.data
+
+    def read_excel_data_from_model(self, model: LoadExcelModel):
+        result = asyncio.run(model.read_all_data_from_excel())
+        if isinstance(result, Error):
+            return
+
+        if isinstance(result, Success):
+            self._student_data = result.data
 
     def initialize_excel_file(self, new_work_book: Workbook):
         new_work_sheet = new_work_book.active
@@ -351,6 +359,9 @@ class ExcelController:
             format_all_columns_with_hard_coded(work_sheet=new_work_sheet)
 
             new_work_book.save("receipt.xlsx")
+            return
+
+        print("Text data or student data has not been loaded, call read_text_data_from_model & read_excel_data_from_model first.")
 
     # TODO
     # def set_text_data_to_excel_file(self, data: Fee):

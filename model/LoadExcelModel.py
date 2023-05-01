@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from model.Result import Result
 
 
-class LoadTextModel(ABC):
+class LoadExcelModel(ABC):
     @abstractmethod
-    async def read_all_text_from_note(self) -> Result:
+    async def read_all_data_from_excel(self) -> Result:
         pass
