@@ -1,7 +1,9 @@
 from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
+
 from controller.ExcelController import ExcelController
 from model.ExcelModel import ExcelModel
+from view.ReceiptView import ReceiptView
 
 # work_book: Workbook = load_workbook(filename="ReceiptData.xlsx")
 # work_sheet: Worksheet = work_book.active
@@ -28,18 +30,11 @@ from model.ExcelModel import ExcelModel
 # student_data.append(work_book.sheetnames[0])
 #
 # print(Student(*student_data))
+# above code is just note
 
 
 controller = ExcelController()
-
 model = ExcelModel()
-
-new_work_book: Workbook = Workbook()
-new_work_sheet: Worksheet = new_work_book.active
-new_work_sheet.title = "小班第一胎"
-
-controller.read_text_data_from_model(model=model)
-controller.read_excel_data_from_model(model=model)
-controller.initialize_excel_file(new_work_book=new_work_book)
+view = ReceiptView(controller, model)
 
 # need open the finished file function
