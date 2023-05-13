@@ -48,5 +48,4 @@ controller.read_text_data_from_model(model=model)
 controller.read_excel_data_from_model(model=model)
 controller.initialize_excel_file(new_work_book=new_work_book)
 
-
 # need open the finished file function

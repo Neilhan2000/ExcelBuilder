@@ -40,8 +40,7 @@ class ExcelModel(LoadTextModel, LoadExcelModel):
                 await file.close()
                 print("File was closed successfully")
 
-    # TODO: load student from excel
-    async def read_all_data_from_excel(self) -> Result:
+    async def read_all_data_from_excel(self) -> Result: # need to return list of student
         try:
             work_book = await load_workbook(filename="ReceiptData.xlsx")
             work_sheet = work_book.active
@@ -59,7 +58,7 @@ class ExcelModel(LoadTextModel, LoadExcelModel):
                         property_in_row.value == "請假減收":
                     needed_property.append(property_in_row.column - 1)
 
-            print(needed_property)
+            # print(needed_property)
 
             for student_property_column in needed_property:
                 student_data.append(work_sheet[convert_col_and_row_to_position(col_number=student_property_column , row_number=3)].value)
