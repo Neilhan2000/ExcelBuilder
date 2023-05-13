@@ -1,49 +1,41 @@
-import asyncio
-
-from openpyxl.workbook import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
-from mapper.DataMapper import DataMapper
 from openpyxl.styles import Font, Alignment, Border, Side
-from model.LoadTextModel import LoadTextModel
-from model.LoadExcelModel import LoadExcelModel
-from model.Result import Success, Error
-from model.dataclass.Fee import Fee
-from model.dataclass.Date import Date
+from openpyxl.workbook import Workbook
+
+from controller import ExcelController
+from excelutils.CustomWorksheet import format_all_columns_with_hard_coded, set_single_cell_value, set_single_row_height, \
+    set_single_cell_alignment
+from excelutils.opserverpattern.Observer import Observer
+from excelutils.opserverpattern.Subject import Subject
+from mapper.DataMapper import DataMapper
+from model.ExcelModel import ExcelModel
 from model.dataclass.Student import Student
-from excelutils.CustomWorksheet import format_all_columns_with_hard_coded, set_single_cell_alignment, \
-    set_single_row_height, \
-    set_single_cell_value
-from datetime import datetime
 
 
-class ExcelController:
-    _text_data: Fee = None
-    # _student_data: Student = None
-    _student_list: list
-    _receipt_issue_date = None
+class ReceiptView(Observer):
 
-    def __init__(self):
-        self._get_system_date()
+    new_work_book: Workbook = Workbook()
 
-    def read_text_data_from_model(self, model: LoadTextModel):
-        result = asyncio.run(model.read_all_text_from_note())
-        if isinstance(result, Error):
-            return
+    def __init__(self, controller: ExcelController, model: ExcelModel):
+        self.controller = controller
+        self.model = model
+        controller.attach(self)
+        self._load_data()
 
-        if isinstance(result, Success):
-            self._text_data = result.data
+    def _load_data(self):
+        self.controller.read_text_data_from_model(self.model)
+        self.controller.read_excel_data_from_model(self.model)
+        if self.controller.is_model_initialized():
+            self.controller.notify()  # Actually, the notify function should be called in controller calss but I was lazy to do so haha...
 
-    def read_excel_data_from_model(self, model: LoadExcelModel):
-        result = asyncio.run(model.read_all_data_from_excel())
-        if isinstance(result, Error):
-            return
+    def initialize_excel_file(self):
+        new_work_sheet = self.new_work_book.active
+        new_work_sheet.title = "小班第一胎"
+        controller = self.controller
+        student_list: Student = controller.student_list
+        receipt_issue_date = controller.receipt_issue_date
+        text_data = controller.text_data
 
-        if isinstance(result, Success):
-            self._student_list = result.data
-
-    def initialize_excel_file(self, new_work_book: Workbook):
-        new_work_sheet = new_work_book.active
-        if self._is_model_initialized():
+        if controller.is_model_initialized():
             DataMapper.init_title_item(
                 work_sheet=new_work_sheet,
                 title="嘉義市私立精英幼兒園(準公共幼兒園)",
@@ -79,7 +71,7 @@ class ExcelController:
 
             DataMapper.init_title_item(
                 work_sheet=new_work_sheet,
-                title=f"幼生姓名：{self._student_list.name}      　　  班別：{self._student_list.class_type}               {self._map_date_to_term_period()}",
+                title=f"幼生姓名：{student_list.name}      　　  班別：{student_list.class_type}               {controller.map_date_to_term_period()}",
                 font_style=Font(size=10),
                 alignment=Alignment(horizontal="center"),
                 border=Border(
@@ -96,7 +88,7 @@ class ExcelController:
 
             DataMapper.init_title_item(
                 work_sheet=new_work_sheet,
-                title=f"年      月   費用      繳費日期：     {self._receipt_issue_date.year}年    月     日        年齡：{self._map_class_type_to_age(self._student_list.class_type)}歲",
+                title=f"年      月   費用      繳費日期：     {receipt_issue_date.year}年    月     日        年齡：{controller.map_class_type_to_age(student_list.class_type)}歲",
                 font_style=Font(size=10),
                 alignment=Alignment(horizontal="center"),
                 border=Border(
@@ -130,7 +122,7 @@ class ExcelController:
                 left_column_range="A6:A8",
                 left_title="學期\n收費",
                 middle_columns_value=["學費", "雜費"],
-                right_columns_value=[self._text_data.tuition_fee, self._text_data.miscellaneous_fee_term],
+                right_columns_value=[text_data.tuition_fee, text_data.miscellaneous_fee_term],
                 left_column_font=Font(size=9),
                 other_font=Font(size=10),
                 left_column_alignment=Alignment(horizontal="center", vertical="center"),
@@ -150,11 +142,11 @@ class ExcelController:
                 left_title="月收費",
                 middle_columns_value=["午餐費", "點心費", "材料費", "活動費", "雜費"],
                 right_columns_value=[
-                    self._text_data.lunch_fee,
-                    self._text_data.dessert_fee,
-                    self._text_data.material_fee,
-                    self._text_data.activity_fee,
-                    self._text_data.miscellaneous_fee_month
+                    text_data.lunch_fee,
+                    text_data.dessert_fee,
+                    text_data.material_fee,
+                    text_data.activity_fee,
+                    text_data.miscellaneous_fee_month
                 ],
                 left_column_font=Font(size=9),
                 other_font=Font(size=10),
@@ -238,10 +230,10 @@ class ExcelController:
                 right_split_row=["E6:E7", "E8:E9", "E10:E11", "E12:E13", "E14:E15", "E16:E17"],
                 left_column_values=["第1胎子女", "第2胎子女", "第3胎(含)以上子女", "低收入戶或\n中低收入", "", ""],
                 right_column_values=[
-                    self._text_data.first_child,
-                    self._text_data.second_child,
-                    self._text_data.third_child,
-                    self._text_data.low_income_households,
+                    text_data.first_child,
+                    text_data.second_child,
+                    text_data.third_child,
+                    text_data.low_income_households,
                     "",
                     "-"
                 ],
@@ -272,8 +264,8 @@ class ExcelController:
 
             DataMapper.init_multiple_merged_cell_item(
                 work_sheet=new_work_sheet,
-                position_value=[f"幼兒屬性為：", self._student_list.child_property, "每月應繳",
-                                f"{1000 - self._student_list.leave_refund}"],
+                position_value=[f"幼兒屬性為：", student_list.child_property, "每月應繳",
+                                f"{1000 - student_list.leave_refund}"],
                 split_position=["D18", "E18:F18", "G18:H18", "I18"],
                 font_style=Font(size=10),
                 alignment=Alignment(vertical="center", horizontal="right"),
@@ -334,7 +326,7 @@ class ExcelController:
             DataMapper.init_row_and_column_merged_item(
                 work_sheet=new_work_sheet,
                 merged_range="C21:C22",
-                value=f"{self._student_list.leave_refund}",
+                value=f"{student_list.leave_refund}",
                 text_font=Font(size=10),
                 text_alignment=Alignment(horizontal="right", vertical="center"),
                 border=Border(
@@ -369,40 +361,13 @@ class ExcelController:
 
             format_all_columns_with_hard_coded(work_sheet=new_work_sheet)
 
-            new_work_book.save("receipt.xlsx")
+            self.new_work_book.save("receipt.xlsx")
             return
 
         print(
-            "Text data or student data has not been loaded, call read_text_data_from_model & read_excel_data_from_model first.")
+            "Text data or student data has not been loaded, call read_text_data_from_model & "
+            "read_excel_data_from_model first.")
 
-    # TODO
-    # def set_text_data_to_excel_file(self, data: Fee):
-
-    def _get_system_date(self):
-        system_date = datetime.now()
-        self._receipt_issue_date = Date(
-            year=system_date.year - 1911,
-            month=system_date.month,
-            day=system_date.day
-        )
-        print(f"Issued date is {self._receipt_issue_date}")
-
-    def _is_model_initialized(self) -> bool:
-        return self._text_data and self._student_list and self._receipt_issue_date is not None
-
-    # below function should be moved to model class or somewhere
-    def _map_class_type_to_age(self, class_type) -> int:
-        match class_type:
-            case "大班":
-                return 5
-            case "中班":
-                return 4
-            case "小班":
-                return 3
-
-    def _map_date_to_term_period(self) -> str:
-        current_year = self._receipt_issue_date.year
-        current_month = self._receipt_issue_date.month
-        if 2 <= current_month <= 7:
-            return f"{current_year - 1}學年度    第二學期：{current_year}年2月1日至{current_year}年7月31日"
-        return f"{current_year}學年度    第一學期：{current_year}年8月1日至{current_year + 1}年1月31日"
+    # abstract method
+    def update(self):
+        self.initialize_excel_file()
